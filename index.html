@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MotoGP Track Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #e8001d;
+      --gold: #f5a623;
+      --white: #f0f0f0;
+      --gray: #888;
+      --dark: #111;
+      --card-bg: #161616;
+      --border: #2a2a2a;
+    }
+
+    body {
+      background: #000;
+      color: var(--white);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── TOP NAV BUTTONS ── */
+    .top-nav-bar {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      gap: 10px;
+      z-index: 1500;
+    }
+    .top-nav-btn {
+      background: rgba(22,22,22,0.92);
+      border: 1px solid var(--border);
+      color: var(--white);
+      padding: 9px 18px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .top-nav-btn:hover { background: var(--red); border-color: var(--red); }
+    .top-nav-btn .btn-icon { font-size: 1rem; }
+
+    /* ── HERO ── */
+    header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(232,0,29,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: var(--white);
+    }
+    .logo span { color: var(--red); }
+    .tagline {
+      font-size: 1rem;
+      color: var(--gray);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+    .flag-strip {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .flag-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--gray);
+      padding: 8px 18px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .flag-btn:hover, .flag-btn.active {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+    }
+
+    /* ── TRACK CARDS ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .track-card {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .track-card.visible { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-country {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 4px;
+    }
+    .card-name {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.1;
+    }
+    .stats-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .stat {
+      text-align: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+      border-radius: 2px;
+    }
+    .stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .stat-lbl {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 680px) { .card-body { grid-template-columns: 1fr; } }
+
+    .track-map-wrap {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+    }
+    .track-map-wrap svg { width: 100%; height: auto; display: block; }
+
+    .turn-dot { cursor: pointer; transition: r 0.15s; }
+    .turn-dot:hover circle { r: 9; }
+
+    #tooltip {
+      position: fixed;
+      background: #1a1a1a;
+      border: 1px solid var(--red);
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      max-width: 200px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 999;
+      line-height: 1.4;
+    }
+    #tooltip.show { opacity: 1; }
+    #tooltip strong { display: block; color: var(--gold); font-family: 'Orbitron', monospace; font-size: 0.75rem; margin-bottom: 4px; }
+
+    .track-info h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .track-info p {
+      color: #ccc;
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+      line-height: 1.7;
+    }
+
+    .turns-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .turns-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 10px 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .turns-list li:hover { border-color: var(--red); }
+    .turn-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--red);
+      min-width: 30px;
+      margin-top: 1px;
+    }
+    .turn-desc { font-size: 0.88rem; color: #bbb; }
+    .turn-name { font-weight: 600; color: var(--white); font-size: 0.93rem; }
+
+    .photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #444;
+      font-size: 0.72rem;
+      text-align: center;
+      padding: 8px;
+    }
+    .track-photos {
+      margin-top: 32px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .track-photos h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 600px) { .photo-grid { grid-template-columns: 1fr 1fr; } }
+    .photo-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      aspect-ratio: 16/10;
+      background: var(--card-bg);
+      cursor: pointer;
+    }
+    .photo-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .photo-item:hover img { transform: scale(1.06); }
+    .photo-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.82));
+      color: #ddd;
+      font-size: 0.72rem;
+      padding: 18px 8px 6px;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .photo-item:hover .photo-caption { opacity: 1; }
+
+    /* lightbox */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    #lightbox-caption { color: #aaa; font-size: 0.85rem; letter-spacing: 1px; }
+    #lightbox-close {
+      position: absolute;
+      top: 20px; right: 28px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #333;
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #333;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ══════════════════════════════════════
+       LOGIN MODAL
+    ══════════════════════════════════════ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      animation: overlayFade 0.2s ease;
+    }
+    .modal-overlay.open { display: flex; }
+    @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-box {
+      background: #101010;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--red);
+      width: 100%;
+      max-width: 420px;
+      margin: 16px;
+      border-radius: 4px;
+      animation: modalSlide 0.28s ease;
+      position: relative;
+    }
+    @keyframes modalSlide { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+
+    .modal-header {
+      padding: 28px 32px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--white);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--red); }
+
+    .modal-body { padding: 28px 32px 32px; }
+
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 8px;
+    }
+    .form-input {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      color: var(--white);
+      padding: 12px 14px;
+      border-radius: 2px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--red); }
+    .form-input.error { border-color: #ff4444; }
+
+    .password-wrap { position: relative; }
+    .password-toggle {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .password-toggle:hover { color: var(--white); }
+
+    .password-rules {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .rule {
+      font-size: 0.78rem;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .rule.valid { color: #4caf50; }
+    .rule.invalid { color: #ff4444; }
+    .rule-icon { font-size: 0.7rem; }
+
+    .form-error {
+      color: #ff4444;
+      font-size: 0.82rem;
+      margin-top: 6px;
+      display: none;
+    }
+    .form-error.show { display: block; }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--red);
+      border: none;
+      color: #fff;
+      padding: 14px;
+      border-radius: 2px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .btn-primary:hover { background: #c0001a; }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .login-success {
+      display: none;
+      text-align: center;
+      padding: 20px 0 10px;
+    }
+    .login-success.show { display: block; }
+    .login-success-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .login-success-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.9rem;
+      color: #4caf50;
+      letter-spacing: 2px;
+    }
+    .login-success-sub { color: var(--gray); font-size: 0.85rem; margin-top: 6px; }
+
+    .logged-in-indicator {
+      display: none;
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: rgba(22,22,22,0.92);
+      border: 1px solid #4caf50;
+      color: #4caf50;
+      padding: 7px 14px;
+      border-radius: 2px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      z-index: 1500;
+      backdrop-filter: blur(8px);
+      align-items: center;
+      gap: 6px;
+    }
+    .logged-in-indicator.show { display: flex; }
+
+    /* ══════════════════════════════════════
+       TRACK WINNERS MODAL
+    ══════════════════════════════════════ */
+    .winners-modal-box {
+      background: #101010;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--gold);
+      width: 100%;
+      max-width: 780px;
+      margin: 16px;
+      border-radius: 4px;
+      animation: modalSlide 0.28s ease;
+      position: relative;
+      height: 88vh;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .winners-modal-box .modal-header {
+      border-top: none;
+      flex-shrink: 0;
+    }
+    .winners-modal-box .modal-title { color: var(--gold); }
+
+    .winners-track-tabs {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      flex-shrink: 0;
+    }
+    .winners-track-tabs::-webkit-scrollbar { height: 3px; }
+    .winners-track-tabs::-webkit-scrollbar-track { background: transparent; }
+    .winners-track-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .winner-tab {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--gray);
+      padding: 11px 18px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .winner-tab:hover { color: var(--white); }
+    .winner-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    .winners-content {
+      padding: 20px 24px 24px;
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    .winners-content::-webkit-scrollbar { width: 4px; }
+    .winners-content::-webkit-scrollbar-track { background: transparent; }
+    .winners-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .winners-panel { display: none; }
+    .winners-panel.active { display: block; }
+
+    .winners-track-meta {
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .winners-track-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .winners-track-sub { font-size: 0.85rem; color: var(--gray); }
+
+    /* ── RECENT WINNER HERO CARD ── */
+    .recent-winner-card {
+      background: linear-gradient(135deg, #1a0a00 0%, #161616 60%, #0a0a1a 100%);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+      padding: 0;
+      margin-bottom: 20px;
+      display: flex;
+      overflow: hidden;
+      min-height: 140px;
+      position: relative;
+    }
+    .recent-winner-card::before {
+      content: 'MOST RECENT WINNER';
+      position: absolute;
+      top: 10px; left: 16px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: var(--gold);
+      opacity: 0.8;
+    }
+    .winner-photo-zone {
+      width: 130px;
+      min-height: 140px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      background: #111;
+    }
+    .winner-photo-zone img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .winner-photo-zone .photo-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+    .biker-photo-input { display: none; }
+
+    .winner-info-zone {
+      flex: 1;
+      padding: 32px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .winner-year-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    .winner-name-big {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(0.95rem, 2vw, 1.25rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .winner-nat-bike {
+      font-size: 0.88rem;
+      color: var(--gray);
+      margin-bottom: 4px;
+    }
+
+    /* Winners table */
+    .winners-table-wrap { margin-top: 4px; }
+    .winners-section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .winners-table { width: 100%; border-collapse: collapse; }
+    .winners-table th {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .winners-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #181818;
+      font-size: 0.9rem;
+      color: #ccc;
+      vertical-align: middle;
+    }
+    .winners-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+    .winners-table tbody tr:first-child td { color: var(--white); background: rgba(245,166,35,0.05); }
+    .winners-table tr:last-child td { border-bottom: none; }
+    .year-cell {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .rider-cell { color: var(--white); font-weight: 600; }
+    .bike-cell { color: var(--gray); font-size: 0.82rem; }
+    .nat-cell { font-size: 1rem; }
+    .winners-note {
+      font-size: 0.75rem;
+      color: #383838;
+      margin-top: 14px;
+      font-style: italic;
+    }
+    /* ══════════════════════════════════════
+       AUTH TABS (Login / Sign Up)
+    ══════════════════════════════════════ */
+    .auth-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--gray);
+      padding: 6px 20px 10px;
+      cursor: pointer;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .auth-tab-btn.active { color: var(--white); border-bottom-color: var(--red); }
+    .auth-tab-btn:hover:not(.active) { color: #bbb; }
+
+    /* ══════════════════════════════════════
+       TYRES MODAL
+    ══════════════════════════════════════ */
+    .tyres-modal-box {
+      background: #080808;
+      border: 1px solid var(--border);
+      border-top: 3px solid #0ea5e9;
+      width: 100%;
+      max-width: 900px;
+      margin: 16px;
+      border-radius: 4px;
+      animation: modalSlide 0.28s ease;
+      height: 90vh;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .tyres-modal-box .modal-header { flex-shrink: 0; border-bottom-color: #1a1a1a; }
+    .tyres-content {
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+      padding: 20px 24px 28px;
+      scrollbar-width: thin;
+      scrollbar-color: #222 transparent;
+    }
+    .tyres-content::-webkit-scrollbar { width: 4px; }
+    .tyres-content::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+    .tyres-intro {
+      font-size: 0.92rem;
+      color: #aaa;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      border-left: 3px solid #0ea5e9;
+      border-radius: 2px;
+    }
+
+    /* Filter tabs */
+    .tyre-filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .tyre-filter-btn {
+      background: #111;
+      border: 1px solid var(--border);
+      color: var(--gray);
+      padding: 7px 16px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .tyre-filter-btn:hover { border-color: #0ea5e9; color: #0ea5e9; }
+    .tyre-filter-btn.active { background: #0ea5e9; border-color: #0ea5e9; color: #000; }
+
+    /* Tyre grid */
+    .tyres-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 640px) { .tyres-grid { grid-template-columns: 1fr; } }
+
+    .tyre-card {
+      background: #0f0f0f;
+      border: 1px solid #1e1e1e;
+      border-radius: 4px;
+      padding: 18px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: border-color 0.2s, transform 0.2s;
+      animation: fadeIn 0.35s ease;
+    }
+    .tyre-card:hover { border-color: #333; transform: translateY(-2px); }
+    .tyre-card.hidden { display: none; }
+
+    /* Tyre circle SVG-style visual */
+    .tyre-visual { flex-shrink: 0; }
+    .tyre-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 6px solid transparent;
+      position: relative;
+    }
+    .tyre-inner {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(0,0,0,0.8);
+    }
+    /* Compound colours */
+    .soft-tyre   { background: radial-gradient(circle at 35% 35%, #ff6666, #e8001d); border-color: #c00015; box-shadow: 0 0 18px rgba(232,0,29,0.35); }
+    .medium-tyre { background: radial-gradient(circle at 35% 35%, #ffd166, #f5a623); border-color: #c07d00; box-shadow: 0 0 18px rgba(245,166,35,0.35); }
+    .hard-tyre   { background: radial-gradient(circle at 35% 35%, #ddd, #999);       border-color: #666;    box-shadow: 0 0 14px rgba(200,200,200,0.2); }
+    .wet-tyre    { background: radial-gradient(circle at 35% 35%, #60c8ff, #0ea5e9); border-color: #0077b6; box-shadow: 0 0 18px rgba(14,165,233,0.4); }
+    .inter-tyre  { background: radial-gradient(circle at 35% 35%, #6ee7b7, #10b981); border-color: #059669; box-shadow: 0 0 18px rgba(16,185,129,0.35); }
+    .asym-tyre   { background: radial-gradient(circle at 35% 35%, #d8b4fe, #a855f7); border-color: #7c3aed; box-shadow: 0 0 18px rgba(168,85,247,0.35); }
+
+    /* Compound badge */
+    .tyre-compound-badge {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 3px 8px;
+      border-radius: 2px;
+      margin-bottom: 6px;
+    }
+    .soft-badge   { background: rgba(232,0,29,0.15);   color: #ff6666;  border: 1px solid rgba(232,0,29,0.3); }
+    .medium-badge { background: rgba(245,166,35,0.15); color: #ffd166;  border: 1px solid rgba(245,166,35,0.3); }
+    .hard-badge   { background: rgba(170,170,170,0.1); color: #ccc;     border: 1px solid rgba(170,170,170,0.25); }
+    .wet-badge    { background: rgba(14,165,233,0.15); color: #60c8ff;  border: 1px solid rgba(14,165,233,0.3); }
+    .inter-badge  { background: rgba(16,185,129,0.15); color: #6ee7b7;  border: 1px solid rgba(16,185,129,0.3); }
+    .asym-badge   { background: rgba(168,85,247,0.15); color: #d8b4fe;  border: 1px solid rgba(168,85,247,0.3); }
+
+    .tyre-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 3px;
+    }
+    .tyre-condition {
+      font-size: 0.78rem;
+      color: var(--gray);
+      margin-bottom: 8px;
+    }
+    .tyre-desc {
+      font-size: 0.84rem;
+      color: #bbb;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    /* Spec bars */
+    .tyre-specs { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+    .tyre-spec { display: flex; align-items: center; gap: 8px; }
+    .spec-label {
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #555;
+      min-width: 90px;
+    }
+    .spec-bar {
+      flex: 1;
+      height: 4px;
+      background: #1e1e1e;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .spec-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    .tyre-tracks {
+      font-size: 0.75rem;
+      color: #444;
+      font-style: italic;
+      border-top: 1px solid #1a1a1a;
+      padding-top: 8px;
+      margin-top: 4px;
+    }
+
+    .tyres-footer-note {
+      font-size: 0.75rem;
+      color: #333;
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid #141414;
+      font-style: italic;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOP NAV BUTTONS ── -->
+<div class="top-nav-bar">
+  <button class="top-nav-btn" id="authBtn" onclick="openAuthModal('login')">
+    <span class="btn-icon">🔐</span> Login
+  </button>
+  <button class="top-nav-btn" id="signupNavBtn" onclick="openAuthModal('signup')">
+    <span class="btn-icon">📝</span> Sign Up
+  </button>
+  <button class="top-nav-btn" onclick="openWinnersModal()">
+    <span class="btn-icon">🏆</span> Track Winners
+  </button>
+  <button class="top-nav-btn" onclick="openTyresModal()">
+    <span class="btn-icon">🏁</span> Types of Tyres
+  </button>
+</div>
+
+<!-- ── LOGGED IN INDICATOR ── -->
+<div class="logged-in-indicator" id="loggedInIndicator">
+  ✔ Logged In
+</div>
+
+<!-- ── AUTH MODAL (LOGIN + SIGN UP) ── -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div style="display:flex; gap:0;">
+        <button class="auth-tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Login</button>
+        <button class="auth-tab-btn" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+      <button class="modal-close" onclick="closeAuthModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- ── LOGIN FORM ── -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="loginUsername" placeholder="Enter your username" autocomplete="off"/>
+          <div class="form-error" id="loginUsernameError">Please enter a username.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-wrap">
+            <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" oninput="checkLoginRules()"/>
+            <button class="password-toggle" type="button" onclick="togglePassword('loginPassword')">Show</button>
+          </div>
+          <div class="form-error" id="loginPasswordError">Incorrect username or password.</div>
+        </div>
+        <div class="form-error" id="loginGeneralError" style="margin-bottom:8px;">No account found. Please sign up first.</div>
+        <button class="btn-primary" onclick="handleLogin()">ENTER THE PADDOCK</button>
+        <div style="text-align:center; margin-top:14px; font-size:0.82rem; color:var(--gray);">
+          No account? <span style="color:var(--red); cursor:pointer; text-decoration:underline;" onclick="switchAuthTab('signup')">Sign up here</span>
+        </div>
+      </div>
+
+      <!-- ── SIGN UP FORM ── -->
+      <div id="signupForm" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="signupName" placeholder="Enter your full name"/>
+          <div class="form-error" id="signupNameError">Please enter your name.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="signupUsername" placeholder="Choose a username" autocomplete="off"/>
+          <div class="form-error" id="signupUsernameError">Username already taken.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com"/>
+          <div class="form-error" id="signupEmailError">Please enter a valid email.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-wrap">
+            <input type="password" class="form-input" id="signupPassword" placeholder="Create a password" oninput="checkSignupRules()"/>
+            <button class="password-toggle" type="button" onclick="togglePassword('signupPassword')">Show</button>
+          </div>
+          <div class="password-rules">
+            <div class="rule" id="su-ruleLength"><span class="rule-icon">○</span> At least 8 characters</div>
+            <div class="rule" id="su-ruleNumber"><span class="rule-icon">○</span> Contains a number (0–9)</div>
+            <div class="rule" id="su-ruleSpecial"><span class="rule-icon">○</span> Contains a special character (!@#$%^&*...)</div>
+          </div>
+          <div class="form-error" id="signupPasswordError">Password must have 8+ chars, a number, and a special character.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <div class="password-wrap">
+            <input type="password" class="form-input" id="signupConfirm" placeholder="Repeat your password"/>
+            <button class="password-toggle" type="button" onclick="togglePassword('signupConfirm')">Show</button>
+          </div>
+          <div class="form-error" id="signupConfirmError">Passwords do not match.</div>
+        </div>
+        <button class="btn-primary" onclick="handleSignup()">CREATE ACCOUNT</button>
+        <div style="text-align:center; margin-top:14px; font-size:0.82rem; color:var(--gray);">
+          Already a member? <span style="color:var(--red); cursor:pointer; text-decoration:underline;" onclick="switchAuthTab('login')">Login here</span>
+        </div>
+      </div>
+
+      <!-- ── SUCCESS ── -->
+      <div class="login-success" id="authSuccess">
+        <div class="login-success-icon">🏍️</div>
+        <div class="login-success-text" id="authSuccessTitle">ACCESS GRANTED</div>
+        <div class="login-success-sub" id="authSuccessSub">Welcome to the paddock, Rider!</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── TYRES MODAL ── -->
+<div class="modal-overlay" id="tyresModal">
+  <div class="tyres-modal-box">
+    <div class="modal-header">
+      <div class="modal-title" style="color:#e8f4fd;">🏁 TYPES OF TYRES</div>
+      <button class="modal-close" onclick="closeTyresModal()">✕</button>
+    </div>
+    <div class="tyres-content">
+
+      <div class="tyres-intro">
+        MotoGP uses Michelin as the official tyre supplier. Three compounds are available per race weekend — teams select which tyres to use based on track temperature, weather, circuit layout, and race distance.
+      </div>
+
+      <!-- Compound filter tabs -->
+      <div class="tyre-filter-tabs">
+        <button class="tyre-filter-btn active" onclick="filterTyres('all', this)">All Conditions</button>
+        <button class="tyre-filter-btn" onclick="filterTyres('dry', this)">Dry</button>
+        <button class="tyre-filter-btn" onclick="filterTyres('wet', this)">Wet</button>
+        <button class="tyre-filter-btn" onclick="filterTyres('intermediate', this)">Intermediate</button>
+      </div>
+
+      <div class="tyres-grid" id="tyresGrid">
+
+        <!-- SOFT -->
+        <div class="tyre-card" data-condition="dry">
+          <div class="tyre-visual">
+            <div class="tyre-circle soft-tyre">
+              <div class="tyre-inner">S</div>
+            </div>
+          </div>
+          <div class="tyre-info">
+            <div class="tyre-compound-badge soft-badge">SOFT</div>
+            <div class="tyre-name">Soft Compound</div>
+            <div class="tyre-condition">☀️ Dry Conditions</div>
+            <div class="tyre-desc">Maximum grip, shortest lifespan. Used in qualifying and short sprints. Generates heat rapidly — ideal for cooler tracks or early laps. Degrades quickly under aggressive riding or high temperatures.</div>
+            <div class="tyre-specs">
+              <div class="tyre-spec"><span class="spec-label">Grip</span><div class="spec-bar"><div class="spec-fill" style="width:98%; background:#e8001d;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Durability</span><div class="spec-bar"><div class="spec-fill" style="width:28%; background:#e8001d;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Warm-up</span><div class="spec-bar"><div class="spec-fill" style="width:90%; background:#e8001d;"></div></div></div>
+            </div>
+            <div class="tyre-tracks">Best at: Qatar, Jerez, Sachsenring</div>
+          </div>
+        </div>
+
+        <!-- MEDIUM -->
+        <div class="tyre-card" data-condition="dry">
+          <div class="tyre-visual">
+            <div class="tyre-circle medium-tyre">
+              <div class="tyre-inner">M</div>
+            </div>
+          </div>
+          <div class="tyre-info">
+            <div class="tyre-compound-badge medium-badge">MEDIUM</div>
+            <div class="tyre-name">Medium Compound</div>
+            <div class="tyre-condition">☀️ Dry Conditions</div>
+            <div class="tyre-desc">The balanced choice — solid grip combined with good durability. The most common race-day selection. Works across a wide range of temperatures and suits riders who manage tyre wear well throughout a grand prix distance.</div>
+            <div class="tyre-specs">
+              <div class="tyre-spec"><span class="spec-label">Grip</span><div class="spec-bar"><div class="spec-fill" style="width:72%; background:#f5a623;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Durability</span><div class="spec-bar"><div class="spec-fill" style="width:65%; background:#f5a623;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Warm-up</span><div class="spec-bar"><div class="spec-fill" style="width:60%; background:#f5a623;"></div></div></div>
+            </div>
+            <div class="tyre-tracks">Best at: Mugello, COTA, Phillip Island</div>
+          </div>
+        </div>
+
+        <!-- HARD -->
+        <div class="tyre-card" data-condition="dry">
+          <div class="tyre-visual">
+            <div class="tyre-circle hard-tyre">
+              <div class="tyre-inner">H</div>
+            </div>
+          </div>
+          <div class="tyre-info">
+            <div class="tyre-compound-badge hard-badge">HARD</div>
+            <div class="tyre-name">Hard Compound</div>
+            <div class="tyre-condition">☀️ Dry / Hot Conditions</div>
+            <div class="tyre-desc">Built to last in punishing heat. Lower peak grip but extraordinary durability over a full race distance. Chosen at abrasive circuits or in extremely hot ambient temperatures. Takes longer to reach optimal operating temperature.</div>
+            <div class="tyre-specs">
+              <div class="tyre-spec"><span class="spec-label">Grip</span><div class="spec-bar"><div class="spec-fill" style="width:45%; background:#aaa;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Durability</span><div class="spec-bar"><div class="spec-fill" style="width:97%; background:#aaa;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Warm-up</span><div class="spec-bar"><div class="spec-fill" style="width:22%; background:#aaa;"></div></div></div>
+            </div>
+            <div class="tyre-tracks">Best at: High-temp circuits, desert tracks</div>
+          </div>
+        </div>
+
+        <!-- WET -->
+        <div class="tyre-card" data-condition="wet">
+          <div class="tyre-visual">
+            <div class="tyre-circle wet-tyre">
+              <div class="tyre-inner">W</div>
+            </div>
+          </div>
+          <div class="tyre-info">
+            <div class="tyre-compound-badge wet-badge">WET</div>
+            <div class="tyre-name">Full Wet Compound</div>
+            <div class="tyre-condition">🌧️ Full Wet / Heavy Rain</div>
+            <div class="tyre-desc">Deep grooved tread channels standing water away from the contact patch. Offers maximum aquaplaning resistance but generates little heat in the dry. Mandatory when race control declares wet conditions. Only viable in consistent heavy rain.</div>
+            <div class="tyre-specs">
+              <div class="tyre-spec"><span class="spec-label">Wet Grip</span><div class="spec-bar"><div class="spec-fill" style="width:95%; background:#0ea5e9;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Dry Grip</span><div class="spec-bar"><div class="spec-fill" style="width:12%; background:#0ea5e9;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Water Dispersion</span><div class="spec-bar"><div class="spec-fill" style="width:99%; background:#0ea5e9;"></div></div></div>
+            </div>
+            <div class="tyre-tracks">Used at: Any circuit in heavy rain (e.g. wet Sachsenring)</div>
+          </div>
+        </div>
+
+        <!-- INTERMEDIATE -->
+        <div class="tyre-card" data-condition="intermediate">
+          <div class="tyre-visual">
+            <div class="tyre-circle inter-tyre">
+              <div class="tyre-inner">I</div>
+            </div>
+          </div>
+          <div class="tyre-info">
+            <div class="tyre-compound-badge inter-badge">INTERMEDIATE</div>
+            <div class="tyre-name">Intermediate Compound</div>
+            <div class="tyre-condition">🌦️ Mixed / Damp Conditions</div>
+            <div class="tyre-desc">The bridge between wet and dry. Light tread pattern handles damp patches and residual water without overheating on dry sections. The riskiest call — used when the track is drying but full slicks aren't yet safe. Often the race-defining strategy choice.</div>
+            <div class="tyre-specs">
+              <div class="tyre-spec"><span class="spec-label">Wet Grip</span><div class="spec-bar"><div class="spec-fill" style="width:60%; background:#10b981;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Dry Grip</span><div class="spec-bar"><div class="spec-fill" style="width:52%; background:#10b981;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Versatility</span><div class="spec-bar"><div class="spec-fill" style="width:88%; background:#10b981;"></div></div></div>
+            </div>
+            <div class="tyre-tracks">Used at: Changeable weather races, drying tracks</div>
+          </div>
+        </div>
+
+        <!-- ASYMMETRIC -->
+        <div class="tyre-card" data-condition="dry">
+          <div class="tyre-visual">
+            <div class="tyre-circle asym-tyre">
+              <div class="tyre-inner">A</div>
+            </div>
+          </div>
+          <div class="tyre-info">
+            <div class="tyre-compound-badge asym-badge">ASYMMETRIC</div>
+            <div class="tyre-name">Asymmetric Compound</div>
+            <div class="tyre-condition">☀️ Directional Dry Conditions</div>
+            <div class="tyre-desc">A special construction with harder rubber on the more-stressed side and softer compound on the other. Designed for circuits that heavily favour one direction — like Sachsenring's left-heavy layout. Balances grip and durability where a standard symmetric tyre would wear unevenly.</div>
+            <div class="tyre-specs">
+              <div class="tyre-spec"><span class="spec-label">Inner Edge Grip</span><div class="spec-bar"><div class="spec-fill" style="width:88%; background:#a855f7;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Outer Edge Grip</span><div class="spec-bar"><div class="spec-fill" style="width:55%; background:#a855f7;"></div></div></div>
+              <div class="tyre-spec"><span class="spec-label">Balance</span><div class="spec-bar"><div class="spec-fill" style="width:80%; background:#a855f7;"></div></div></div>
+            </div>
+            <div class="tyre-tracks">Best at: Sachsenring, Austin (direction-biased tracks)</div>
+          </div>
+        </div>
+
+      </div><!-- /tyres-grid -->
+
+      <div class="tyres-footer-note">
+        * Michelin supplies tyres for the MotoGP World Championship. Each team nominates tyre choices before each round based on circuit data and expected weather. Race direction can mandate wet or intermediate tyres for safety.
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="winnersModal">
+  <div class="winners-modal-box">
+    <div class="modal-header">
+      <div class="modal-title">🏆 TRACK WINNERS</div>
+      <button class="modal-close" onclick="closeWinnersModal()">✕</button>
+    </div>
+    <div class="winners-track-tabs" id="winnersTabs"></div>
+    <div class="winners-content" id="winnersContent"></div>
+  </div>
+</div>
+
+<!-- ── TOOLTIP ── -->
+<div id="tooltip"></div>
+
+<!-- ── LIGHTBOX ── -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt=""/>
+  <div id="lightbox-caption"></div>
+</div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">MOTO<span>GP</span> TRACK GUIDE</div>
+  <div class="tagline">Explore the World's Greatest Circuits</div>
+  <div class="flag-strip" id="trackNav"></div>
+</header>
+
+<main>
+  <div class="section-label">Select a circuit above to explore</div>
+  <div id="trackContainer"></div>
+</main>
+
+<footer>MotoGP TRACK GUIDE &nbsp;·&nbsp; FOR EDUCATIONAL USE</footer>
+
+<script>
+/* ─── TRACK DATA ─────────────────────────────── */
+const tracks = [
+  {
+    id: "mugello",
+    name: "Mugello Circuit",
+    country: "Italy 🇮🇹",
+    gp: "Italian Grand Prix",
+    length: "5.245 km",
+    turns: 15,
+    lapRecord: "1:46.206",
+    topSpeed: "357 km/h",
+    description: "Set in the heart of Tuscany, Mugello is one of MotoGP's most beloved tracks. Its dramatic elevation changes, high-speed flowing corners and long main straight make it a pure test of man and machine. The passionate Italian tifosi create an electric atmosphere unlike anywhere else.",
+    photos: [
+      { url: "https://tuscany.tips/wp-content/uploads/2026/03/moto-gp-mugello-circuit-1024x576.jpeg", caption: "MotoGP race action — Mugello Circuit, Tuscany" },
+      { url: "https://media.istockphoto.com/id/2183349771/photo/aerial-view-of-mugello-circuit-in-italy.jpg?s=612x612&w=0&k=20&c=2nga7CtolgUPlAW3k5FKRJi9ae82qRzjpgW_HSlZHL0=", caption: "Aerial view — Mugello nestled in the Tuscan hills" },
+      { url: "https://www.mugellocircuit.com/media/djmediatools/cache/images/phocagallery/370x370-crop-90-curve_sandonato.jpg", caption: "San Donato corner — prime overtaking spot" },
+    ],
+    svgPath: "M 80,160 C 80,100 130,60 200,55 C 280,50 320,80 350,90 C 390,100 420,90 450,70 C 490,45 530,60 550,100 C 570,135 555,165 530,180 C 505,195 480,185 460,200 C 440,215 435,240 450,265 C 465,290 490,300 510,320 C 530,340 525,370 500,385 C 475,400 440,390 410,375 C 380,360 350,340 320,330 C 290,320 260,325 240,340 C 220,355 210,375 190,380 C 165,386 140,370 120,350 C 100,330 80,290 80,260 C 80,220 95,190 80,160 Z",
+    turnPoints: [
+      { cx: 200, cy: 55, label: "T1", name: "San Donato", desc: "Heavy braking zone after the long main straight. Classic overtaking spot. Riders brake from 357 km/h." },
+      { cx: 350, cy: 90, label: "T3", name: "Casanova-Savelli", desc: "A fast right-left flick. Requires precise throttle control as the track crests slightly." },
+      { cx: 460, cy: 75, label: "T4", name: "Arrabbiata 1", desc: "Fast right-hander taken at high speed. The name means 'angry' in Italian — for a reason." },
+      { cx: 545, cy: 105, label: "T5", name: "Arrabbiata 2", desc: "Downhill and fast, immediately after T4. Requires huge commitment from riders." },
+      { cx: 510, cy: 320, label: "T9", name: "Scarperia", desc: "Tight hairpin after the Bucine chicane. A key overtaking opportunity mid-sector." },
+      { cx: 240, cy: 340, label: "T13", name: "Correntaio", desc: "Long right-hand sweeper that sets up the final sector. Smooth arc, high exit speed needed." },
+      { cx: 120, cy: 350, label: "T15", name: "Bucine", desc: "Final corner feeding onto the main straight. A clean exit here is crucial for a fast lap time." },
+    ],
+    winners: [
+      { year: 2024, rider: "Francesco Bagnaia", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2023, rider: "Francesco Bagnaia", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2022, rider: "Francesco Bagnaia", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2021, rider: "Miguel Oliveira", nationality: "🇵🇹", bike: "KTM" },
+      { year: 2019, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2018, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Ducati" },
+      { year: 2017, rider: "Andrea Dovizioso", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2016, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2015, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2014, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2013, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2012, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2011, rider: "Casey Stoner", nationality: "🇦🇺", bike: "Honda" },
+      { year: 2010, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+    ],
+    recentWinnerPhoto: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Francesco_Bagnaia_2023.jpg/440px-Francesco_Bagnaia_2023.jpg"
+  },
+  {
+    id: "phillip",
+    name: "Phillip Island",
+    country: "Australia 🇦🇺",
+    gp: "Australian Grand Prix",
+    length: "4.448 km",
+    turns: 12,
+    lapRecord: "1:27.506",
+    topSpeed: "319 km/h",
+    description: "Located on a wind-swept island off Victoria's coast, Phillip Island is a pure rider's circuit. Its fast, flowing layout with sweeping corners and dramatic ocean backdrops make it one of the most spectacular venues in motorsport. Riders consistently rank it among their all-time favourites.",
+    photos: [
+      { url: "https://www.motorcyclealliance.com.au/wp-content/uploads/2017/08/phillip-island-circuit-aerial-view-300x200.jpg", caption: "Phillip Island — ocean views from the circuit" },
+      { url: "https://www.the-race.com/content/images/size/w1000/2026/02/GnG_1275650_HiRes.jpg", caption: "High-speed racing at Phillip Island" },
+      { url: "https://cdnimg.co/1291237c-dd1e-4320-b0f3-78c55838df50/48e65c69-847c-428e-a398-f2f5bedc6d62/grand-prix-circuit-phillip-island-seaside-circuit.jpg", caption: "The fast, flowing Phillip Island layout" },
+    ],
+    svgPath: "M 90,200 C 90,140 140,100 200,95 C 270,88 330,110 380,105 C 430,100 470,80 510,90 C 545,98 560,130 545,165 C 530,200 495,210 480,240 C 465,270 475,305 490,330 C 505,355 510,385 485,400 C 460,415 430,400 400,385 C 370,370 345,345 310,335 C 275,325 240,335 210,350 C 180,365 155,385 130,380 C 105,375 90,350 90,320 C 90,290 100,265 90,235 C 88,222 90,210 90,200 Z",
+    turnPoints: [
+      { cx: 200, cy: 95, label: "T1", name: "Doohan Corner", desc: "Named after local legend Mick Doohan. A fast right-hander that demands high commitment and trust." },
+      { cx: 380, cy: 105, label: "T3", name: "MG Corner", desc: "Long left-hand sweeper taken at very high speed. Riders lean at extreme angles here." },
+      { cx: 510, cy: 90, label: "T4", name: "Lukey Heights", desc: "Crests a hill — riders go slightly blind over the top. Very fast and very brave." },
+      { cx: 545, cy: 160, label: "T6", name: "Honda Hairpin", desc: "The slowest corner on the circuit. Tight hairpin, main overtaking zone, heavy braking required." },
+      { cx: 490, cy: 330, label: "T9", name: "Siberia", desc: "Named for how cold and exposed this part of the track is. A demanding double-apex right." },
+      { cx: 310, cy: 335, label: "T10", name: "Hayshed", desc: "Fast left-right flick that leads into the final sector. Used to be open field around it." },
+      { cx: 130, cy: 380, label: "T12", name: "Gardeners Corner", desc: "Final turn onto the main straight. Getting this right is critical for lap time." },
+    ],
+    winners: [
+      { year: 2024, rider: "Francesco Bagnaia", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2023, rider: "Marco Bezzecchi", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2022, rider: "Alex Rins", nationality: "🇪🇸", bike: "Suzuki" },
+      { year: 2019, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2018, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2017, rider: "Johann Zarco", nationality: "🇫🇷", bike: "Yamaha Tech3" },
+      { year: 2016, rider: "Cal Crutchlow", nationality: "🇬🇧", bike: "Honda LCR" },
+      { year: 2015, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2014, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2013, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2012, rider: "Casey Stoner", nationality: "🇦🇺", bike: "Honda" },
+      { year: 2011, rider: "Casey Stoner", nationality: "🇦🇺", bike: "Honda" },
+    ],
+    recentWinnerPhoto: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Francesco_Bagnaia_2023.jpg/440px-Francesco_Bagnaia_2023.jpg"
+  },
+  {
+    id: "cota",
+    name: "Circuit of the Americas",
+    country: "USA 🇺🇸",
+    gp: "Americas Grand Prix",
+    length: "5.513 km",
+    turns: 20,
+    lapRecord: "2:02.463",
+    topSpeed: "352 km/h",
+    description: "COTA in Austin, Texas is one of the most modern and challenging circuits on the calendar. Its signature steep uphill run into Turn 1 is unlike anything else in MotoGP. The track blends high-speed straights with technical hairpins and flowing esses, making it incredibly demanding.",
+    photos: [
+      { url: "https://i.redd.it/n7b5xvcoo1t11.jpg", caption: "COTA — Circuit of the Americas, Austin TX" },
+      { url: "https://motorsporttickets.com/blog/wp-content/uploads/2021/04/dne1402no630-edited.jpg", caption: "The famous uphill run into Turn 1" },
+      { url: "https://motorsportguides.com/wp-content/uploads/2019/01/grand-prix-of-the-americas-motogp-cota-1.jpg", caption: "MotoGP action at COTA" },
+    ],
+    svgPath: "M 90,260 C 90,220 100,170 140,140 C 180,110 200,75 220,60 C 245,42 270,55 270,90 C 270,120 255,140 260,165 C 265,190 290,200 320,195 C 355,190 380,170 410,175 C 440,180 455,205 445,235 C 435,260 410,270 400,295 C 390,320 405,348 395,375 C 385,400 360,410 335,400 C 310,390 295,365 270,355 C 245,345 215,350 195,365 C 175,380 165,405 145,410 C 120,416 100,400 95,375 C 88,345 90,305 90,280 Z",
+    turnPoints: [
+      { cx: 220, cy: 60, label: "T1", name: "The Uphill", desc: "COTA's most iconic corner. Riders go blind over a steep crest at 350+ km/h before heavy braking. Very dramatic." },
+      { cx: 270, cy: 90, label: "T2", name: "Esses Entry", desc: "Begins a fast ess-section inspired by Maggotts at Silverstone. High speed, fluid direction changes." },
+      { cx: 320, cy: 195, label: "T10", name: "Back Straight Hairpin", desc: "Preceded by the long back straight. One of the key overtaking points — riders brake from 350 km/h." },
+      { cx: 440, cy: 235, label: "T12", name: "The Sweeper", desc: "Long right-hand sweeper requiring full commitment. Opens up a series of flowing turns." },
+      { cx: 395, cy: 375, label: "T16", name: "Stadium Section", desc: "Part of the slow, technical final sector. Crowd can see multiple turns from the grandstands." },
+      { cx: 270, cy: 355, label: "T18", name: "The Complex", desc: "Tight technical section with tricky camber changes. Balance of the bike is critical here." },
+      { cx: 145, cy: 410, label: "T20", name: "Final Hairpin", desc: "Last corner before the long main straight. A clean exit here enables top speed of 350+ km/h." },
+    ],
+    winners: [
+      { year: 2024, rider: "Pedro Acosta", nationality: "🇪🇸", bike: "KTM Tech3" },
+      { year: 2023, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2022, rider: "Enea Bastianini", nationality: "🇮🇹", bike: "Ducati Gresini" },
+      { year: 2021, rider: "Francesco Bagnaia", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2019, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2018, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2017, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2016, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2015, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2014, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2013, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+    ],
+    recentWinnerPhoto: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Pedro_Acosta_2024_Mugello.jpg/440px-Pedro_Acosta_2024_Mugello.jpg"
+  },
+  {
+    id: "jerez",
+    name: "Circuito de Jerez",
+    country: "Spain 🇪🇸",
+    gp: "Spanish Grand Prix",
+    length: "4.423 km",
+    turns: 13,
+    lapRecord: "1:36.828",
+    topSpeed: "290 km/h",
+    description: "One of the most technical tracks on the calendar, Jerez is a fan favourite thanks to its superb atmosphere and exciting racing. Situated near Seville in southern Spain, its slow and twisty layout rewards technical precision over pure power, producing incredibly close battles.",
+    photos: [
+      { url: "https://gpticketstore.vshcdn.net/uploads/images/2180/circuito-de-jerez-angel-nieto-spain-motogp-espana-spanien-motogpspain-motogpspanien-motogpespana-motogpjerez-history-geschichte-historia-4.jpg", caption: "Circuito de Jerez — southern Spain" },
+      { url: "https://circuitodejerez.com/wp-content/uploads/2026/01/evento107-scaled.jpg", caption: "Close racing at Jerez — technical twists" },
+      { url: "https://newsgpcdn.vshcdn.net/i/images/1509/motogp-jerez-1_f.jpg", caption: "Jerez grandstands packed with fans" },
+    ],
+    svgPath: "M 95,220 C 95,170 125,130 170,115 C 210,100 255,115 290,110 C 330,104 360,85 395,95 C 430,104 445,135 435,165 C 425,195 400,205 390,230 C 380,255 395,280 400,305 C 406,330 400,360 380,375 C 358,390 330,380 305,365 C 280,350 260,330 235,320 C 210,310 185,318 165,335 C 145,352 135,378 115,385 C 98,390 88,375 90,355 C 92,330 110,305 108,275 C 106,248 95,238 95,220 Z",
+    turnPoints: [
+      { cx: 290, cy: 110, label: "T1", name: "Expo Ovejas", desc: "Opening right-hander after the main straight. Riders arrive at 290 km/h and brake very hard." },
+      { cx: 395, cy: 95, label: "T2", name: "Curva Sito Pons", desc: "Named after Spanish champion Sito Pons. Fast right-hander that rewards bravery." },
+      { cx: 435, cy: 165, label: "T4", name: "La Curva Ducados", desc: "Sweeping downhill right. The track falls away slightly, loading the front tyre heavily." },
+      { cx: 400, cy: 305, label: "T8", name: "Peluqui", desc: "Tight hairpin in the technical middle sector. Classic overtaking spot on the brakes." },
+      { cx: 305, cy: 365, label: "T10", name: "Ángel Nieto", desc: "Named after Spanish legend Ángel Nieto. A flowing right-hander that flows into the final chicane." },
+      { cx: 165, cy: 335, label: "T11", name: "Michelin Corner", desc: "Tight hairpin. Riders have to be patient and trail brake carefully." },
+      { cx: 115, cy: 385, label: "T13", name: "Final Curve", desc: "Last corner onto the front straight. Slow and technical — smooth exits are essential." },
+    ],
+    winners: [
+      { year: 2024, rider: "Jorge Martin", nationality: "🇪🇸", bike: "Ducati Pramac" },
+      { year: 2023, rider: "Jack Miller", nationality: "🇦🇺", bike: "KTM" },
+      { year: 2022, rider: "Francesco Bagnaia", nationality: "🇮🇹", bike: "Ducati" },
+      { year: 2021, rider: "Fabio Quartararo", nationality: "🇫🇷", bike: "Yamaha" },
+      { year: 2019, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2018, rider: "Dani Pedrosa", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2017, rider: "Maverick Viñales", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2016, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2015, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2014, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2013, rider: "Dani Pedrosa", nationality: "🇪🇸", bike: "Honda" },
+    ],
+    recentWinnerPhoto: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jorge_Mart%C3%ADn_2023_Catalunya.jpg/440px-Jorge_Mart%C3%ADn_2023_Catalunya.jpg"
+  },
+  {
+    id: "sachsenring",
+    name: "Sachsenring",
+    country: "Germany 🇩🇪",
+    gp: "German Grand Prix",
+    length: "3.671 km",
+    turns: 13,
+    lapRecord: "1:20.269",
+    topSpeed: "298 km/h",
+    description: "The shortest circuit on the MotoGP calendar, Sachsenring is a twisty and technical track in eastern Germany. Its famous sequence of left-hand corners puts intense pressure on left-shoulder muscles. Marc Márquez has famously dominated here, winning 11 consecutive MotoGP races.",
+    photos: [
+      { url: "https://www.discovergermany.com/wp-content/uploads/2016/05/IMG_3498.jpeg", caption: "Sachsenring — shortest track on the calendar" },
+      { url: "https://www.mcnews.com.au/wp-content/uploads/2025/07/2025-MotoGP-Rnd11-Sachsenring-Sun-Race-Lap2-Marquez-Bezzecchi-Digi-1024x564.jpg", caption: "Riders battling through Sachsenring's lefts" },
+      { url: "https://images.motorsport-magazin.com/images/960/540/q_80/1106515.jpg", caption: "MotoGP German Grand Prix atmosphere" },
+    ],
+    svgPath: "M 100,240 C 100,190 135,150 175,140 C 215,130 255,150 285,145 C 320,140 345,118 375,125 C 405,132 415,162 405,190 C 395,215 370,225 365,250 C 360,275 378,298 375,325 C 372,350 352,368 328,370 C 305,372 285,355 265,340 C 245,325 228,305 208,296 C 188,287 168,292 150,308 C 132,323 122,348 108,355 C 96,360 88,347 90,330 C 92,308 110,290 110,265 C 110,252 100,250 100,240 Z",
+    turnPoints: [
+      { cx: 285, cy: 145, label: "T1", name: "Turn 1", desc: "Right-hander after the back straight. Hard braking zone where much of the racing action happens." },
+      { cx: 375, cy: 125, label: "T3", name: "Waterfall", desc: "Fast right followed by a steep downhill section. The bike compresses heavily at the bottom." },
+      { cx: 405, cy: 190, label: "T6", name: "Omega", desc: "The famous left-hand Omega complex. Slow but demands smooth, precise inputs." },
+      { cx: 365, cy: 250, label: "T8", name: "Left Hairpin", desc: "Tight left hairpin — one of many lefts that punish the riders' left shoulder over a race distance." },
+      { cx: 325, cy: 370, label: "T10", name: "Spitzkehre", desc: "The tightest hairpin on the circuit. Very slow — a key spot for brave late-braking overtakes." },
+      { cx: 208, cy: 296, label: "T11", name: "Quicky", desc: "Fast left flick after the hairpin. Sets riders up for the final left-hand sequence." },
+      { cx: 150, cy: 308, label: "T12", name: "Last Left", desc: "Final left before the main straight. Exit speed here defines top-speed performance on the straight." },
+    ],
+    winners: [
+      { year: 2024, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Ducati Gresini" },
+      { year: 2023, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2022, rider: "Fabio Quartararo", nationality: "🇫🇷", bike: "Yamaha" },
+      { year: 2021, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2019, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2018, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2017, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2016, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2015, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2014, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2013, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+    ],
+    recentWinnerPhoto: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Marc_Marquez_2019_Sachsenring.jpg/440px-Marc_Marquez_2019_Sachsenring.jpg"
+  },
+  {
+    id: "losail",
+    name: "Lusail International Circuit",
+    country: "Qatar 🇶🇦",
+    gp: "Qatar Grand Prix",
+    length: "5.380 km",
+    turns: 16,
+    lapRecord: "1:53.380",
+    topSpeed: "349 km/h",
+    description: "Lusail is MotoGP's only floodlit night race circuit, set in the Qatari desert. Its long main straight gives bikes room to hit near-maximum speed, while the flowing layout demands exceptional tyre management in the sand-blasted desert conditions. The opening round of the season.",
+    photos: [
+      { url: "https://motogp.tech3racing.fr/images/2023/Tracks/Qatar.jpeg", caption: "Lusail — MotoGP's only floodlit night circuit" },
+      { url: "https://www.lcsc.qa/sites/default/files/styles/avif_webp/public/album_migrate/67ff62952c775_Action-Shot.jpg.webp?itok=ZRC3CTbi", caption: "Desert night racing under the lights in Qatar" },
+      { url: "https://cdn.crash.net/2025-04/GnG_1221159_HiRes.jpg?width=1600&aspect_ratio=16:9", caption: "Qatar Grand Prix — season opener action" },
+    ],
+    svgPath: "M 90,230 C 88,180 115,135 160,118 C 205,100 255,115 295,108 C 340,100 375,78 415,88 C 455,98 470,135 460,168 C 450,200 425,215 418,245 C 410,275 428,303 430,335 C 432,365 415,392 390,400 C 365,408 338,393 312,378 C 285,362 265,337 238,325 C 210,313 180,320 158,336 C 136,352 125,378 108,385 C 92,390 85,375 88,355 C 90,328 105,305 102,278 C 99,255 90,248 90,230 Z",
+    turnPoints: [
+      { cx: 295, cy: 108, label: "T1", name: "Turn 1", desc: "End of the huge main straight. One of the best overtaking opportunities after 349 km/h top speeds." },
+      { cx: 415, cy: 88, label: "T3", name: "The Kink", desc: "Fast right-hander taken at high speed. Riders barely lift the throttle through here." },
+      { cx: 460, cy: 168, label: "T6", name: "Flowing Right", desc: "Part of a fast flowing right-hand sequence. Tyres load up heavily in the quick direction changes." },
+      { cx: 430, cy: 335, label: "T10", name: "Long Right", desc: "Long right-hand corner mid-sector. Smooth, consistent throttle application rewards here." },
+      { cx: 390, cy: 400, label: "T13", name: "Hairpin", desc: "Tight hairpin leading into the back section. Riders scrub significant speed here." },
+      { cx: 238, cy: 325, label: "T14", name: "Flowing Left", desc: "Quick left flick after the hairpin. The start of the fast return section to the main straight." },
+      { cx: 108, cy: 385, label: "T16", name: "Final Turn", desc: "Last corner before the main straight. A wide, fast exit onto the start-finish line." },
+    ],
+    winners: [
+      { year: 2024, rider: "Jorge Martin", nationality: "🇪🇸", bike: "Ducati Pramac" },
+      { year: 2023, rider: "Jorge Martin", nationality: "🇪🇸", bike: "Ducati Pramac" },
+      { year: 2022, rider: "Enea Bastianini", nationality: "🇮🇹", bike: "Ducati Gresini" },
+      { year: 2021, rider: "Fabio Quartararo", nationality: "🇫🇷", bike: "Yamaha" },
+      { year: 2019, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+      { year: 2018, rider: "Cal Crutchlow", nationality: "🇬🇧", bike: "Honda LCR" },
+      { year: 2017, rider: "Johann Zarco", nationality: "🇫🇷", bike: "Yamaha Tech3" },
+      { year: 2016, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2015, rider: "Jorge Lorenzo", nationality: "🇪🇸", bike: "Yamaha" },
+      { year: 2014, rider: "Marc Márquez", nationality: "🇪🇸", bike: "Honda" },
+    ],
+    recentWinnerPhoto: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Jorge_Mart%C3%ADn_2023_Catalunya.jpg/440px-Jorge_Mart%C3%ADn_2023_Catalunya.jpg"
+  }
+];
+
+/* ─── BUILD NAV ─────────────────────────────────── */
+const nav = document.getElementById('trackNav');
+const container = document.getElementById('trackContainer');
+const tooltip = document.getElementById('tooltip');
+
+tracks.forEach((t, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'flag-btn';
+  btn.textContent = t.country + ' ' + t.name.split(' ').slice(-1)[0];
+  btn.addEventListener('click', () => showTrack(t.id, btn));
+  nav.appendChild(btn);
+});
+
+function showTrack(id, btnEl) {
+  document.querySelectorAll('.flag-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  document.querySelectorAll('.track-card').forEach(c => c.classList.remove('visible'));
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    card.classList.add('visible');
+    document.querySelector('.section-label').style.display = 'none';
+  }
+}
+
+/* ─── BUILD CARDS ────────────────────────────────── */
+tracks.forEach(t => {
+  const card = document.createElement('div');
+  card.className = 'track-card';
+  card.id = 'card-' + t.id;
+
+  const dots = t.turnPoints.map(tp => `
+    <g class="turn-dot" data-label="${tp.label}" data-name="${tp.name}" data-desc="${tp.desc}">
+      <circle cx="${tp.cx}" cy="${tp.cy}" r="7" fill="#e8001d" fill-opacity="0.85"/>
+      <text x="${tp.cx}" y="${tp.cy + 4}" text-anchor="middle" fill="#fff" font-size="7" font-family="Orbitron,monospace" font-weight="700">${tp.label.replace('T','')}</text>
+    </g>
+  `).join('');
+
+  const turnItems = t.turnPoints.map(tp => `
+    <li class="turn-item" data-label="${tp.label}">
+      <span class="turn-num">${tp.label}</span>
+      <div>
+        <div class="turn-name">${tp.name}</div>
+        <div class="turn-desc">${tp.desc}</div>
+      </div>
+    </li>
+  `).join('');
+
+  const photoItems = t.photos.map((p, idx) => `
+    <div class="photo-item" onclick="openLightbox('${p.url.replace(/'/g,"\\'")}','${p.caption.replace(/'/g,"\\'")}')">
+      <img src="${p.url}" alt="${p.caption}" loading="lazy"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <div class="photo-placeholder" style="display:none">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span>${p.caption}</span>
+      </div>
+      <div class="photo-caption">${p.caption}</div>
+    </div>
+  `).join('');
+
+  card.innerHTML = `
+    <div class="card-header">
+      <div>
+        <div class="card-country">${t.country} &nbsp;·&nbsp; ${t.gp}</div>
+        <div class="card-name">${t.name}</div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-val">${t.length}</div><div class="stat-lbl">Length</div></div>
+          <div class="stat"><div class="stat-val">${t.turns}</div><div class="stat-lbl">Turns</div></div>
+          <div class="stat"><div class="stat-val">${t.topSpeed}</div><div class="stat-lbl">Top Speed</div></div>
+          <div class="stat"><div class="stat-val">${t.lapRecord}</div><div class="stat-lbl">Lap Record</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="track-map-wrap">
+        <svg viewBox="0 0 650 460" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow-${t.id}">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <path d="${t.svgPath}" fill="none" stroke="#e8001d" stroke-width="18" stroke-opacity="0.12"/>
+          <path d="${t.svgPath}" fill="none" stroke="#333" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="${t.svgPath}" fill="none" stroke="#555" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="${t.svgPath}" fill="none" stroke="#e8001d" stroke-width="2" stroke-dasharray="8 6" stroke-opacity="0.5"/>
+          ${dots}
+        </svg>
+        <div style="text-align:center; font-size:0.7rem; color:var(--gray); letter-spacing:2px; text-transform:uppercase; margin-top:8px;">Hover turns for info</div>
+      </div>
+      <div class="track-info">
+        <h3>About the Circuit</h3>
+        <p>${t.description}</p>
+        <h3>Key Corners</h3>
+        <ul class="turns-list">${turnItems}</ul>
+      </div>
+    </div>
+    <div class="track-photos">
+      <h3>Circuit Gallery</h3>
+      <div class="photo-grid">${photoItems}</div>
+    </div>
+  `;
+
+  container.appendChild(card);
+});
+
+/* ─── TOOLTIP ──────────────────────────────────── */
+document.addEventListener('mousemove', e => {
+  const dots = Array.from(document.querySelectorAll('.turn-dot'));
+  let found = false;
+  dots.forEach(dot => {
+    const rect = dot.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    if (Math.hypot(e.clientX - cx, e.clientY - cy) < 20) {
+      tooltip.innerHTML = `<strong>${dot.dataset.label} — ${dot.dataset.name}</strong>${dot.dataset.desc}`;
+      tooltip.style.left = (e.clientX + 16) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+      tooltip.classList.add('show');
+      found = true;
+    }
+  });
+  if (!found) tooltip.classList.remove('show');
+});
+document.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+
+/* ─── LIGHTBOX ─────────────────────────────────── */
+function openLightbox(url, caption) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-caption').textContent = caption;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+document.getElementById('lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeLightbox(); closeAuthModal(); closeWinnersModal(); closeTyresModal(); }
+});
+
+/* ══════════════════════════════════════
+   AUTH SYSTEM — SIGN UP + LOGIN
+══════════════════════════════════════ */
+const registeredUsers = {};
+let currentTab = 'login';
+
+function openAuthModal(tab) {
+  switchAuthTab(tab || 'login');
+  ['loginUsername','loginPassword','signupName','signupUsername','signupEmail','signupPassword','signupConfirm'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('error'); }
+  });
+  document.querySelectorAll('#authModal .form-error').forEach(e => e.classList.remove('show'));
+  document.getElementById('authSuccess').classList.remove('show');
+  document.getElementById('loginForm').style.display = '';
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('authModal').classList.add('open');
+}
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('open');
+}
+document.getElementById('authModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAuthModal();
+});
+
+function switchAuthTab(tab) {
+  currentTab = tab;
+  document.getElementById('authSuccess').classList.remove('show');
+  if (tab === 'login') {
+    document.getElementById('loginForm').style.display = '';
+    document.getElementById('signupForm').style.display = 'none';
+    document.getElementById('tabLogin').classList.add('active');
+    document.getElementById('tabSignup').classList.remove('active');
+  } else {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('signupForm').style.display = '';
+    document.getElementById('tabLogin').classList.remove('active');
+    document.getElementById('tabSignup').classList.add('active');
+  }
+}
+
+function togglePassword(inputId) {
+  const input = document.getElementById(inputId);
+  const btn = input.nextElementSibling;
+  if (!btn || !btn.classList.contains('password-toggle')) return;
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = 'Hide'; }
+  else { input.type = 'password'; btn.textContent = 'Show'; }
+}
+
+function setRule(id, valid) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'rule' + (valid ? ' valid' : '');
+  el.querySelector('.rule-icon').textContent = valid ? '✔' : '○';
+}
+
+function checkSignupRules() {
+  const val = document.getElementById('signupPassword').value;
+  setRule('su-ruleLength',  val.length >= 8);
+  setRule('su-ruleNumber',  /[0-9]/.test(val));
+  setRule('su-ruleSpecial', /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(val));
+}
+
+function validatePassword(pw) {
+  return pw.length >= 8 && /[0-9]/.test(pw) && /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(pw);
+}
+
+function handleSignup() {
+  let valid = true;
+  const name     = document.getElementById('signupName').value.trim();
+  const username = document.getElementById('signupUsername').value.trim();
+  const email    = document.getElementById('signupEmail').value.trim();
+  const pw       = document.getElementById('signupPassword').value;
+  const confirm  = document.getElementById('signupConfirm').value;
+
+  document.querySelectorAll('#signupForm .form-error').forEach(e => e.classList.remove('show'));
+  ['signupName','signupUsername','signupEmail','signupPassword','signupConfirm'].forEach(id => document.getElementById(id).classList.remove('error'));
+
+  if (!name) { document.getElementById('signupName').classList.add('error'); document.getElementById('signupNameError').classList.add('show'); valid = false; }
+
+  if (!username) {
+    document.getElementById('signupUsername').classList.add('error');
+    document.getElementById('signupUsernameError').textContent = 'Please choose a username.';
+    document.getElementById('signupUsernameError').classList.add('show'); valid = false;
+  } else if (registeredUsers[username.toLowerCase()]) {
+    document.getElementById('signupUsername').classList.add('error');
+    document.getElementById('signupUsernameError').textContent = 'Username already taken.';
+    document.getElementById('signupUsernameError').classList.add('show'); valid = false;
+  }
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('signupEmail').classList.add('error'); document.getElementById('signupEmailError').classList.add('show'); valid = false; }
+  if (!validatePassword(pw)) { document.getElementById('signupPassword').classList.add('error'); document.getElementById('signupPasswordError').classList.add('show'); checkSignupRules(); valid = false; } else { checkSignupRules(); }
+  if (pw !== confirm || !confirm) { document.getElementById('signupConfirm').classList.add('error'); document.getElementById('signupConfirmError').classList.add('show'); valid = false; }
+
+  if (!valid) return;
+
+  registeredUsers[username.toLowerCase()] = { name, email, password: pw, username };
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('authSuccessTitle').textContent = 'ACCOUNT CREATED!';
+  document.getElementById('authSuccessSub').textContent = 'Welcome, ' + name + '! You can now login.';
+  document.getElementById('authSuccess').classList.add('show');
+  setTimeout(() => { switchAuthTab('login'); }, 2400);
+}
+
+function handleLogin() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const pw       = document.getElementById('loginPassword').value;
+
+  document.querySelectorAll('#loginForm .form-error').forEach(e => e.classList.remove('show'));
+  ['loginUsername','loginPassword'].forEach(id => document.getElementById(id).classList.remove('error'));
+
+  if (!username) { document.getElementById('loginUsername').classList.add('error'); document.getElementById('loginUsernameError').classList.add('show'); return; }
+  if (!pw)       { document.getElementById('loginPassword').classList.add('error'); document.getElementById('loginPasswordError').textContent = 'Please enter your password.'; document.getElementById('loginPasswordError').classList.add('show'); return; }
+
+  const user = registeredUsers[username.toLowerCase()];
+  if (!user) { document.getElementById('loginUsername').classList.add('error'); document.getElementById('loginGeneralError').classList.add('show'); return; }
+  if (user.password !== pw) { document.getElementById('loginPassword').classList.add('error'); document.getElementById('loginPasswordError').textContent = 'Incorrect password.'; document.getElementById('loginPasswordError').classList.add('show'); return; }
+
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('authSuccessTitle').textContent = 'ACCESS GRANTED';
+  document.getElementById('authSuccessSub').textContent = 'Welcome back, ' + user.name + '!';
+  document.getElementById('authSuccess').classList.add('show');
+  document.getElementById('loggedInIndicator').classList.add('show');
+  document.getElementById('loggedInIndicator').textContent = '✔ ' + user.name;
+
+  const authBtn = document.getElementById('authBtn');
+  authBtn.innerHTML = '<span class="btn-icon">✔</span> ' + user.name;
+  authBtn.style.borderColor = '#4caf50';
+  authBtn.style.color = '#4caf50';
+  authBtn.onclick = null;
+  document.getElementById('signupNavBtn').style.display = 'none';
+  setTimeout(closeAuthModal, 2200);
+}
+
+/* ══════════════════════════════════════
+   TYRES MODAL
+══════════════════════════════════════ */
+function openTyresModal() {
+  document.getElementById('tyresModal').classList.add('open');
+}
+function closeTyresModal() {
+  document.getElementById('tyresModal').classList.remove('open');
+}
+document.getElementById('tyresModal').addEventListener('click', function(e) {
+  if (e.target === this) closeTyresModal();
+});
+function filterTyres(condition, btn) {
+  document.querySelectorAll('.tyre-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tyre-card').forEach(card => {
+    if (condition === 'all' || card.dataset.condition === condition) card.classList.remove('hidden');
+    else card.classList.add('hidden');
+  });
+}
+
+/* ══════════════════════════════════════
+   TRACK WINNERS LOGIC
+══════════════════════════════════════ */
+function buildWinnersModal() {
+  const tabs = document.getElementById('winnersTabs');
+  const content = document.getElementById('winnersContent');
+  tabs.innerHTML = '';
+  content.innerHTML = '';
+
+  tracks.forEach((t, i) => {
+    // Tab button
+    const tab = document.createElement('button');
+    tab.className = 'winner-tab' + (i === 0 ? ' active' : '');
+    const flag = t.country.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g) ? t.country.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g)[0] : '';
+    tab.textContent = flag + ' ' + t.name.split(' ').slice(-1)[0];
+    tab.onclick = () => {
+      document.querySelectorAll('.winner-tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.winners-panel').forEach(x => x.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + t.id).classList.add('active');
+    };
+    tabs.appendChild(tab);
+
+    const latest = t.winners[0];
+
+    const rows = t.winners.map(w => `
+      <tr>
+        <td class="year-cell">${w.year}</td>
+        <td class="nat-cell">${w.nationality}</td>
+        <td class="rider-cell">${w.rider}</td>
+        <td class="bike-cell">${w.bike}</td>
+      </tr>
+    `).join('');
+
+    const panel = document.createElement('div');
+    panel.className = 'winners-panel' + (i === 0 ? ' active' : '');
+    panel.id = 'panel-' + t.id;
+    panel.innerHTML = `
+      <div class="winners-track-meta">
+        <div class="winners-track-name">${t.name}</div>
+        <div class="winners-track-sub">${t.gp} &nbsp;·&nbsp; ${t.country}</div>
+      </div>
+
+      <!-- Recent Winner Hero Card -->
+      <div class="recent-winner-card">
+        <div class="winner-photo-zone" id="photoZone-${t.id}">
+          <img id="bikerImg-${t.id}" src="${t.recentWinnerPhoto}"
+            alt="${latest.rider}"
+            onerror="this.style.display='none'; document.getElementById('photoFallback-${t.id}').style.display='flex'"/>
+          <div class="photo-fallback" id="photoFallback-${t.id}" style="display:none">🏍️</div>
+        </div>
+        <div class="winner-info-zone">
+          <div class="winner-year-badge">${latest.year} RACE WINNER</div>
+          <div class="winner-name-big">${latest.rider}</div>
+          <div class="winner-nat-bike">${latest.nationality} &nbsp;·&nbsp; ${latest.bike}</div>
+        </div>
+      </div>
+
+      <!-- History Table -->
+      <div class="winners-table-wrap">
+        <div class="winners-section-label">Race History</div>
+        <table class="winners-table">
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Nat.</th>
+              <th>Rider</th>
+              <th>Bike</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div class="winners-note">* 2020 Qatar GP cancelled (COVID-19). MotoGP premier class only.</div>
+      </div>
+    `;
+    content.appendChild(panel);
+  });
+}
+
+function openWinnersModal() {
+  buildWinnersModal();
+  document.getElementById('winnersModal').classList.add('open');
+}
+function closeWinnersModal() {
+  document.getElementById('winnersModal').classList.remove('open');
+}
+document.getElementById('winnersModal').addEventListener('click', function(e) {
+  if (e.target === this) closeWinnersModal();
+});
+
+// Auto-open first track
+document.querySelector('.flag-btn').click();
+</script>
+</body>
+</html>
